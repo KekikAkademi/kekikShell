@@ -1,0 +1,9 @@
+Database: tobstar_cks
+Table: login
+[2 entries]
++----------+------------+
+| username | password   |
++----------+------------+
+| tobstar  | snowgoofy  |
+| admin    | lawyerscks |
++----------+------------+

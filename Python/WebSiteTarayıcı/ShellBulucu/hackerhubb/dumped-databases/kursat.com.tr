@@ -1,0 +1,12 @@
+Database: kursat                            
+Table: user
+[4 entries]
++----------------------+--------------+---------------------------------------------+
+| email                | username     | password                                    |
++----------------------+--------------+---------------------------------------------+
+| sevda@kursat.com.tr  | sevdaok      | 56d1692a0f144c7f94fc6504a8eda3cc            |
+| zeynep@kursat.com.tr | zeynepkursat | 8d9392e31802a0a2e71236718814a7a9            |
+| ali@kursat.com.tr    | alikursat    | 8d9392e31802a0a2e71236718814a7a9            |
+| ardacavdar@gmail.com | ardacavdar   | 5f4dcc3b5aa765d61d8327deb882cf99 (password) |
++----------------------+--------------+---------------------------------------------+
+
